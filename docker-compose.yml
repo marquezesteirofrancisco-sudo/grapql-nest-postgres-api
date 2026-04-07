@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:14.4
+    container_name: anylistDB
+    restart: always
+    ports:
+      - '${DB_PORT}:5432' # Usa 15432 desde Windows para entrar al 5432 del contenedor
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+
+networks:
+  default:
+    name: anylist-network
