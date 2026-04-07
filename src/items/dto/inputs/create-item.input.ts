@@ -1,5 +1,5 @@
 import { InputType, Int, Field, Float } from '@nestjs/graphql';
-import { IsNotEmpty, IsPositive, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsPositive, IsString } from 'class-validator';
 
 @InputType()
 export class CreateItemInput {
@@ -17,6 +17,7 @@ export class CreateItemInput {
 
   @Field(()=> String, {nullable: true})
   @IsString()
+  @IsOptional()
   quantityUnit?: string;
 
 }
