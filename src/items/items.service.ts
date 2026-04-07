@@ -4,6 +4,7 @@ import { UpdateItemInput } from './dto/inputs/update-item.input';
 import { Item } from './entities/item.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+ 
 
 @Injectable()
 export class ItemsService {
@@ -21,12 +22,21 @@ export class ItemsService {
     return await this.itemsRepository.save(newItem);
   }
 
-  findAll() {
-    return [];
+  async findAll() : Promise<Item[]> {
+
+    // TODO: Implement pagination and filtering
+   
+    return await this.itemsRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} item`;
+  async findOne(id: string) : Promise<Item> {
+
+    const item = await this.itemsRepository.findOne({ where: { id } });
+    //const item = await this.itemsRe pository.findOneBy({ id })
+
+    if (!item) { throw new Error(`Item with id ${id} not found`); }
+
+    return item;
   }
 
   update(id: number, updateItemInput: UpdateItemInput) {
