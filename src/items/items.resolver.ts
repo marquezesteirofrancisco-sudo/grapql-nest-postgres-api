@@ -30,7 +30,9 @@ export class ItemsResolver {
   }
 
   @Mutation(() => Item)
-  removeItem(@Args('id', { type: () => Int }) id: number) {
+  removeItem(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string
+    ) : Promise<Item> {
+      console.log('Removing item with id:', {id});
     return this.itemsService.remove(id);
   }
 }
