@@ -6,6 +6,7 @@ import { SingUpInput } from 'src/auth/dto/inputs/singup.input';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Int } from '@nestjs/graphql';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -22,7 +23,10 @@ export class UsersService {
     try
     {
       // crear el nuevo usuario
-      const newUser = this.usersRepository.create(signupInput);
+      const newUser = this.usersRepository.create(
+        { ...signupInput, 
+          password: bcrypt.hashSync(signupInput.password, 10) 
+        });
 
       // grabar el nuevo usuario en la base de datos
       await this.usersRepository.save(newUser);
