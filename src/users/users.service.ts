@@ -50,10 +50,15 @@ export class UsersService {
      
     try
     {
-      return this.usersRepository.findOneByOrFail({ email });
+      return await this.usersRepository.findOneByOrFail({ email });
+
+       
     }
     catch(error)    {
-      this.handleDBExceptions(error);
+      this.handleDBExceptions({
+        code: 'error-001',
+        detail: `User with email ${email} not found`
+      });
     }
 
   }
@@ -70,6 +75,10 @@ export class UsersService {
 
     // error.code 23505 es un error de violación de restricción de unicidad en PostgreSQL
     if (error.code === '23505') {
+      throw new BadRequestException(error.detail);
+    }
+
+    if (error.code === 'error-001') {
       throw new BadRequestException(error.detail);
     }
     
