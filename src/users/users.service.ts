@@ -46,8 +46,16 @@ export class UsersService {
     return Promise.resolve([]);
   }
 
-  findOne(id: string) : Promise<User> {
-    throw new Error('Method not implemented.');
+  async findOneByEmail(email: string) : Promise<User> {
+     
+    try
+    {
+      return this.usersRepository.findOneByOrFail({ email });
+    }
+    catch(error)    {
+      this.handleDBExceptions(error);
+    }
+
   }
 
 /*   update(id: number, updateUserInput: UpdateUserInput) {
