@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
@@ -27,7 +27,7 @@ export  class JwtStrategy extends PassportStrategy(Strategy) {
         // Aquí podrías validar que el usuario aún exista en la base de datos
         // return this.usersService.findOne(payload.sub);
 
-        throw new Error('Método validate no implementado. Deberías implementar la lógica para validar el usuario aquí.');
+        throw new UnauthorizedException('Token is not valid.');
 
 
     }
