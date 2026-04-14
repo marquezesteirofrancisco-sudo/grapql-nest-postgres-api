@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
+import { Exclude } from 'class-transformer';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({name: 'users'})
@@ -17,7 +18,8 @@ export class User {
   @Field(()=> String)
   email : string;
 
-  @Column()
+  @Column({select: false}) // no se selecciona por defecto, para que no se muestre en las consultas
+  @Exclude({ toPlainOnly: true })
   //@Field(()=> String)  
   password : string;
 

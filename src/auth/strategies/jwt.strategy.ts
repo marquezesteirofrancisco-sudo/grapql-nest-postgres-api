@@ -3,6 +3,8 @@ import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { User } from "src/users/entities/user.entity";
+import { JwtPayload } from "../intefaces/jwt-payload.interface";
+import { AuthService } from "../auth.service";
 
 
 @Injectable() 
@@ -12,6 +14,7 @@ export  class JwtStrategy extends PassportStrategy(Strategy) {
 
     constructor(
         private readonly configService: ConfigService,
+        private readonly authService: AuthService, // Inyectamos el AuthService para validar el token
         // Aquí podrías inyectar tu servicio de usuarios si necesitas validar que el usuario aún exista
         // private readonly usersService: UsersService, 
     ) {
@@ -22,13 +25,14 @@ export  class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
 
-    async validate(payload: any) : Promise<User> {
+    async validate(payload: JwtPayload) : Promise<User> {
         console.log('Validando JWT...' , {payload});
-        // Aquí podrías validar que el usuario aún exista en la base de datos
-        // return this.usersService.findOne(payload.sub);
 
-        throw new UnauthorizedException('Token is not valid.');
+        const { id } = payload;
 
+        const user = await this.authService.validateUser(id);
+
+        return user
 
     }
 
