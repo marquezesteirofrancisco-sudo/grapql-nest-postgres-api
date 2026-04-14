@@ -38,10 +38,8 @@ export class AuthResolver {
     @CurrentUser() user: User /* no defino el tipo de dato */
     ) : AuthResponse {
 
-    console.log('Revalidate Token:', {user});
+      return this.authService.revalidateToken(user);
 
-    // return this.authService.revalidateToken(/* );
-    throw new Error('Method not implemented.');
 
   } 
 }
