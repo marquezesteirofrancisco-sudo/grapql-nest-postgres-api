@@ -1,26 +1,35 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { User } from 'src/users/entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
+
+import * as bcrypt from 'bcrypt';
+
+import { LoginInput } from './dto/inputs';
 import { SingUpInput } from './dto/inputs/singup.input';
 import { AuthResponse } from './types/auth-response.type';
+import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { LoginInput } from './dto/inputs';
-import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class AuthService {
 
     constructor(
-        private readonly usersService: UsersService /* TODO: Inyectar el servicio de usuarios */
+        private readonly usersService: UsersService, /* TODO: Inyectar el servicio de usuarios */
+        private readonly jwtService: JwtService, /* TODO: Inyectar el servicio de JWT para generar los tokens */
     ) {}
+
+
+    private getJwtToken(userId: string) {
+        return  this.jwtService.sign({id:userId});
+    }
 
     async signup( signupInput: SingUpInput ) : Promise<AuthResponse> {
 
         // TODO: crear usuario  
         const user = await this.usersService.create(signupInput);
 
-
         // TODO: generar el JWT
-        const token = 'por definir';
+        const token = this.getJwtToken(user.id);
 
         console.log({signupInput});
 
@@ -42,8 +51,8 @@ export class AuthService {
             throw new BadRequestException('Invalid credentials');
         }
 
-        //TODO: generar el JWT
-        const token = "ABC123";
+        // TODO: generar el JWT
+        const token = this.getJwtToken(user.id);
 
         return {
             token,
