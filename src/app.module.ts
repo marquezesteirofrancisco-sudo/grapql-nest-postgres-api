@@ -9,19 +9,55 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { validateHeaderName } from 'http';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { JwtService } from '@nestjs/jwt';
 
 
 @Module({
   imports: [
+
         ConfigModule.forRoot({isGlobal: true,}),
-        GraphQLModule.forRoot<ApolloDriverConfig>({
-        driver: ApolloDriver,
-        // debug: false,
-        playground: false,
-        autoSchemaFile: join( process.cwd(), 'src/schema.gql'),
-        plugins: [
-          ApolloServerPluginLandingPageLocalDefault(), // Activamos la nueva interfaz
-        ]}),
+
+        // TODO: Configracion Basica sin JWT
+        // GraphQLModule.forRoot<ApolloDriverConfig>({
+        //     driver: ApolloDriver,
+        //     // debug: false,
+        //     playground: false,
+        //     autoSchemaFile: join( process.cwd(), 'src/schema.gql'),
+        //     plugins: [
+        //       ApolloServerPluginLandingPageLocalDefault(), // Activamos la nueva interfaz
+        //     ]}
+        // ),
+
+
+
+        GraphQLModule.forRootAsync({
+          driver: ApolloDriver,
+          imports: [AuthModule],
+          inject:  [JwtService],
+        
+          useFactory: async (jwtService: JwtService) => ({
+
+            playground: false,
+            autoSchemaFile: join( process.cwd(), 'src/schema.gql'),
+            plugins: [
+              ApolloServerPluginLandingPageLocalDefault(), // Activamos la nueva interfaz
+            ],
+            context: ({ req }) => {
+              const token = req.headers.authorization?.replace('Bearer ', '');
+              if (!token) 
+                throw new Error('Token no proporcionado');
+ 
+
+              const playground = jwtService.decode(token);
+              if (!playground)
+                  throw new Error('Token inválido');
+
+ 
+            }
+          }),  
+
+        }),
+
 
         TypeOrmModule.forRoot({
           type: 'postgres',
@@ -34,11 +70,19 @@ import { AuthModule } from './auth/auth.module';
           autoLoadEntities: true,
         }),
 
+
         ItemsModule,
 
         UsersModule,
 
         AuthModule,
+
+
+        
+
+
+
+
   ],
   controllers: [],
   providers: [],

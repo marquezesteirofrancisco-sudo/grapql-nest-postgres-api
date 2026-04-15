@@ -18,8 +18,7 @@ export class User {
   @Field(()=> String)
   email : string;
 
-  @Column({select: false}) // no se selecciona por defecto, para que no se muestre en las consultas
-  @Exclude({ toPlainOnly: true })
+  @Column({select: true}) // no se selecciona por defecto, para que no se muestre en las consultas
   //@Field(()=> String)  
   password : string;
 

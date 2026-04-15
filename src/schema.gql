@@ -23,20 +23,31 @@ type AuthResponse {
 }
 
 type Query {
-  items: [Item!]!
-  item(id: ID!): Item!
+  revalidate: AuthResponse!
   users: [User!]!
   user(email: String!): User!
-  revalidate: AuthResponse!
+  items: [Item!]!
+  item(id: ID!): Item!
 }
 
 type Mutation {
+  signup(signupInput: SingUpInput!): AuthResponse!
+  login(loginInput: LoginInput!): AuthResponse!
+  blockUser(id: ID!): User!
   createItem(createItemInput: CreateItemInput!): Item!
   updateItem(updateItemInput: UpdateItemInput!): Item!
   removeItem(id: ID!): Item!
-  blockUser(id: ID!): User!
-  signup(signupInput: SingUpInput!): AuthResponse!
-  login(loginInput: LoginInput!): AuthResponse!
+}
+
+input SingUpInput {
+  email: String!
+  fullName: String!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
 }
 
 input CreateItemInput {
@@ -50,15 +61,4 @@ input UpdateItemInput {
   quantity: Float
   quantityUnit: String
   id: ID!
-}
-
-input SingUpInput {
-  email: String!
-  fullName: String!
-  password: String!
-}
-
-input LoginInput {
-  email: String!
-  password: String!
 }

@@ -29,6 +29,8 @@ export class AuthResolver {
     @Args('loginInput') loginInput: LoginInput  /* no defino el tipo de dato */
   ) : Promise<AuthResponse> {   
 
+// Agrega este console.log para verificar el contenido de loginInput
+
     return this.authService.login(loginInput);
   }
 
