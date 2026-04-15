@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Int } from '@nestjs/graphql';
 import * as bcrypt from 'bcrypt';
+import { ValidRoles } from 'src/auth/enums/valid-roles.enum';
 
 @Injectable()
 export class UsersService {
@@ -42,9 +43,14 @@ export class UsersService {
      
   }
 
-  findAll() : Promise<User[]>{
-    //return Promise.resolve([]);
-    return this.usersRepository.find();
+  findAll(roles: ValidRoles[]) : Promise<User[]>{
+
+    if ( roles.length === 0 ) return this.usersRepository.find( );
+
+    return this.usersRepository.createQueryBuilder('user')
+      .where('user.roles && ARRAY[:...roles]', { roles })
+      .getMany();
+ 
   }
 
   async findOneByEmail(email: string) : Promise<User> {
@@ -52,8 +58,6 @@ export class UsersService {
     try
     {
       return await this.usersRepository.findOneByOrFail({ email });
-
-       
     }
     catch(error)    {
       this.handleDBExceptions({
@@ -62,7 +66,6 @@ export class UsersService {
       });
     }
   }
-
 
   async findOneById(id: string) : Promise<User> {
      

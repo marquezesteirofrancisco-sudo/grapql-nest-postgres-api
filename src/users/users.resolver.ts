@@ -16,7 +16,7 @@ export class UsersResolver {
 
     console.log({ validRoles });
    
-    return this.usersService.findAll();
+    return this.usersService.findAll(validRoles.roles);
   }
 
   @Query(() => User, { name: 'user' })
