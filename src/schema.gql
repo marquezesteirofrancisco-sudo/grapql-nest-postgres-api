@@ -24,10 +24,17 @@ type AuthResponse {
 
 type Query {
   revalidate: AuthResponse!
-  users(roles: [String!] = []): [User!]!
+  users(roles: [ValidRoles!] = []): [User!]!
   user(email: String!): User!
   items: [Item!]!
   item(id: ID!): Item!
+}
+
+"""Roles de usuario validos..."""
+enum ValidRoles {
+  admin
+  user
+  superUser
 }
 
 type Mutation {
