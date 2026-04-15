@@ -24,7 +24,7 @@ type AuthResponse {
 
 type Query {
   revalidate: AuthResponse!
-  users: [User!]!
+  users(roles: [String!] = []): [User!]!
   user(email: String!): User!
   items: [Item!]!
   item(id: ID!): Item!
