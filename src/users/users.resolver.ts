@@ -50,8 +50,11 @@ export class UsersResolver {
     return this.usersService.update(updateUserInput.id, updateUserInput);
   } */
 
-  @Mutation(() => User)
-  blockUser(@Args('id', { type: () => ID }) id: string) : Promise<User>  {
+  @Mutation(() => User, { name: 'blockUser' })
+  blockUser(
+      @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+     @CurrentUser( [ValidRoles.admin]) user: User
+  ) : Promise<User>  {
     return this.usersService.block(id);
   }
 }
