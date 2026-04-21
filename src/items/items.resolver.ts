@@ -39,9 +39,11 @@ export class ItemsResolver {
   }
 
   @Mutation(() => Item)
-  updateItem(@Args('updateItemInput') updateItemInput: UpdateItemInput
+  updateItem(
+    @Args('updateItemInput') updateItemInput: UpdateItemInput,
+    @CurrentUser() user: User 
   ) : Promise<Item> {
-    return this.itemsService.update(updateItemInput.id, updateItemInput);
+    return this.itemsService.update(updateItemInput.id, updateItemInput, user);
   }
 
   @Mutation(() => Item)

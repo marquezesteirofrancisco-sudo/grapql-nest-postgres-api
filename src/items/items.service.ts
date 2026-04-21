@@ -39,7 +39,10 @@ export class ItemsService {
     return item;
   }
 
-  async update(id: string, updateItemInput: UpdateItemInput) : Promise<Item> {
+  async update(id: string, updateItemInput: UpdateItemInput, user: User) : Promise<Item> {
+
+    // si no lo encuentra, lanza error, si lo encuentra pero no pertenece al usuario, lanza error 
+    await this.findOne(id, user); // Ensure the item exists and belongs to the user
 
     const item = await this.itemsRepository.preload(updateItemInput);
 
