@@ -29,9 +29,9 @@ export class ItemsService {
     return await this.itemsRepository.find(user ? { where: { user: { id: user.id } } } : {});
   }
 
-  async findOne(id: string) : Promise<Item> {
+  async findOne(id: string, user: User) : Promise<Item> {
 
-    const item = await this.itemsRepository.findOne({ where: { id } });
+    const item = await this.itemsRepository.findOne({ where: { id, user: { id: user.id } } });
     //const item = await this.itemsRe pository.findOneBy({ id })
 
     if (!item) { throw new Error(`Item with id ${id} not found`); }
@@ -48,9 +48,9 @@ export class ItemsService {
     return await this.itemsRepository.save(item);
   }
 
-  async remove(id: string) :  Promise<Item> {
+  async remove(id: string, user: User ) :  Promise<Item> {
     //TODO: soft delete, integridad referencial, etc
-    const item = await this.findOne(id);
+    const item = await this.findOne(id, user);
 
     await this.itemsRepository.remove(item);
 

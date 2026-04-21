@@ -18,7 +18,7 @@ export class ItemsResolver {
       @CurrentUser() user: User
     ) : Promise<Item>{
 
-      console.log('Creating item with input:', createItemInput, 'for user:', user);
+
       return this.itemsService.create(createItemInput, user);
   }
 
@@ -30,8 +30,12 @@ export class ItemsResolver {
   }
 
   @Query(() => Item, { name: 'item' })
-  findOne(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string) {
-    return this.itemsService.findOne(id);
+  findOne(
+        @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+        @CurrentUser() user: User
+    ) {
+            console.log('Finding item with id:', id, 'for user:', user);
+          return this.itemsService.findOne(id, user);
   }
 
   @Mutation(() => Item)
@@ -41,9 +45,11 @@ export class ItemsResolver {
   }
 
   @Mutation(() => Item)
-  removeItem(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string
+  removeItem(
+      @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+      @CurrentUser() user: User
     ) : Promise<Item> {
       console.log('Removing item with id:', {id});
-    return this.itemsService.remove(id);
+    return this.itemsService.remove(id, user);
   }
 }
