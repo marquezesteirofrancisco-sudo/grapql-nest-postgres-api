@@ -18,6 +18,11 @@ export class CreateItemInput {
   @Field(()=> String, {nullable: true})
   @IsString()
   @IsOptional()
-  quantityUnit?: string;
+  quantityUnits?: string | null; // g, ml, pcs, kg
+
+  @Field(()=> String, {nullable: true})
+  @IsString()
+  @IsOptional()
+  category?: string ;
 
 }
