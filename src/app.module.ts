@@ -10,6 +10,7 @@ import { validateHeaderName } from 'http';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
+import { SeedModule } from './seed/seed.module';
 
 
 @Module({
@@ -76,6 +77,8 @@ import { JwtService } from '@nestjs/jwt';
         UsersModule,
 
         AuthModule,
+
+        SeedModule,
 
 
         
