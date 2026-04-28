@@ -7,7 +7,7 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guards';
 import { User } from 'src/users/entities/user.entity';
 import { PaginationArgs } from 'src/common/dto/args/pagination.args';
-import { serchArgs } from 'src/common/dto/args/search.args';
+import { SearchArgs } from 'src/common/dto/args/search.args';
 
 @Resolver(() => Item)
 @UseGuards( JwtAuthGuard) // Add your authentication guard here
@@ -28,7 +28,7 @@ export class ItemsResolver {
   async findAll(
      @CurrentUser() user: User,
      @Args() paginationArgs: PaginationArgs,
-     @Args() searchArgs: serchArgs
+     @Args() searchArgs: SearchArgs
   ) : Promise<Item[]> {
     return this.itemsService.findAll(user, paginationArgs , searchArgs);
   }
