@@ -29,16 +29,29 @@ export class ItemsService {
 
     const {limit, offset} = paginationArgs; 
     const { search } = searchArgs;
-   
-    return await this.itemsRepository.find({
-        take: limit,
-        skip: offset,
-        where: { user: { 
-          id: user.id 
-        } ,
-        name :  ILike(`%${search}%`)  
+
+ 
+    const queryBuilder = this.itemsRepository.createQueryBuilder('item') // 1. Alias 'item'
+      .take(limit)
+      .skip(offset)
+      .where('item.userId = :userId', { userId: user.id }); // 2. Referencia al campo de relación
+
+      if (search) {
+        queryBuilder.andWhere('LOWER(name) LIKE :search', { search: `%${search}%` });
       }
-    });      
+
+      return await queryBuilder.getMany();
+
+   
+    // return await this.itemsRepository.find({
+    //     take: limit,
+    //     skip: offset,
+    //     where: { user: { 
+    //       id: user.id 
+    //     } ,
+    //     name :  ILike(`%${search}%`)  
+    //   }
+    // });      
 
 
 
