@@ -31,7 +31,7 @@ type Query {
   users(roles: [ValidRoles!] = []): [User!]!
   userByEmail(email: String!): User!
   userById(id: ID!): User!
-  items: [Item!]!
+  items(offset: Int = 0, limit: Int = 10): [Item!]!
   item(id: ID!): Item!
 }
 
