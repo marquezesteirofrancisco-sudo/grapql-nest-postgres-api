@@ -3,11 +3,13 @@ import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 import { SingUpInput } from 'src/auth/dto/inputs/singup.input';
-import { Repository } from 'typeorm';
+import { createQueryBuilder, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Int } from '@nestjs/graphql';
 import * as bcrypt from 'bcrypt';
 import { ValidRoles } from 'src/auth/enums/valid-roles.enum';
+import { PaginationArgs } from 'src/common/dto/args/pagination.args';
+import { SearchArgs } from 'src/common/dto/args/search.args';
 
 @Injectable()
 export class UsersService {
@@ -43,21 +45,26 @@ export class UsersService {
      
   }
 
-  findAll(roles: ValidRoles[]) : Promise<User[]>{
+  async findAll(roles: ValidRoles[] , paginationArgs: PaginationArgs, searchArgs: SearchArgs) : Promise<User[]>{
 
-    if ( roles.length === 0 ) 
-      return this.usersRepository.find( 
-        //TODO : No es necesario porque tnemos lazy la prppiedad lastUpdateBy, pero lo dejo para que se vea como se haría con relaciones normales
-        // {
-        //   relations: {
-        //     lastUpdateBy: true 
-        //   }
-        // }
-      );
+    const {limit, offset} = paginationArgs; 
+    const { search } = searchArgs;
 
-    return this.usersRepository.createQueryBuilder('user')
-      .where('user.roles && ARRAY[:...roles]', { roles })
-      .getMany();
+    const queryBuilder = this.usersRepository.createQueryBuilder('user')
+        .take(limit)
+        .skip(offset);
+
+    if (search) {
+      queryBuilder.andWhere('LOWER(user.fullName) LIKE :search', { search: `%${search}%` });
+    }
+
+    // 2. Gestión de Roles
+    if (roles.length > 0) {
+      // Usamos el operador && de Postgres para intersección de arrays
+      queryBuilder.andWhere('user.roles && ARRAY[:...roles]', { roles });
+    }
+
+    return await queryBuilder.getMany();
  
   }
 
